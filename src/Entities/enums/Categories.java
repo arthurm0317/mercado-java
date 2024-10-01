@@ -1,6 +1,6 @@
 package Entities.enums;
 
-public enum Categorys {
+public enum Categories {
     FOOD,
     FRUITS,
     VEGETABLES,

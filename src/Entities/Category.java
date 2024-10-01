@@ -1,17 +1,17 @@
 package Entities;
 
-import Entities.enums.Categorys;
+import Entities.enums.Categories;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 public class Category {
-    private Categorys categorys;
+    private Categories categories;
     private List<Product> products;
 
-    public Category(Categorys categorys) {
-        this.categorys = categorys;
+    public Category(Categories categories) {
+        this.categories = categories;
         this.products = new ArrayList<>();
     }
     public void addProducts(Set<Product> product){
@@ -23,7 +23,7 @@ public class Category {
 
     @Override
     public String toString() {
-        return "Categoria: " + categorys +
+        return "Categoria: " + categories +
                 ", Produtos:" + products;
     }
 }
