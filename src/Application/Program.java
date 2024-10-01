@@ -33,19 +33,17 @@ public class Program {
                         scanner.nextLine();
                         System.out.print("Digite a categoria do produto (FOOD, FRUITS, VEGETABLES, CLEANING, HYGIENE, DRINKS): ");
                         String categoryInput = scanner.nextLine().toUpperCase();
-                        Categorys categoryEnum = Categorys.valueOf(categoryInput); // Casting da String para enum
+                        Categorys categoryEnum = Categorys.valueOf(categoryInput); 
                         System.out.print("Digite o nome do produto: ");
                         String name = scanner.nextLine();
                         System.out.print("Digite o preço do produto: ");
                         double price = scanner.nextDouble();
                         System.out.print("Digite a quantidade do produto: ");
                         int quantity = scanner.nextInt();
-
-                        // Criar produto
+                        
                         Product newProduct = new Product(id, name, price, quantity);
 
-                        // Adicionar produto à categoria correspondente
-                        categoryMap.putIfAbsent(categoryEnum, new TreeSet<>()); // Garante que a categoria exista no Map
+                        categoryMap.putIfAbsent(categoryEnum, new TreeSet<>()); 
                         categoryMap.get(categoryEnum).add(newProduct);
                     }
                     case 2 -> {
@@ -54,7 +52,6 @@ public class Program {
                         System.out.print("Digite a quantidade a ser acrescentada: ");
                         int addQuantity = scanner.nextInt();
 
-                        // Percorre todas as categorias e produtos para encontrar o produto pelo ID
                         boolean found = false;
                         for (Set<Product> products : categoryMap.values()) {
                             for (Product product : products) {
@@ -64,7 +61,7 @@ public class Program {
                                     break;
                                 }
                             }
-                            if (found) break; // Se o produto foi encontrado, sai do loop
+                            if (found) break; 
                         }
                         if (!found) {
                             System.out.println("Produto não encontrado!");
@@ -75,8 +72,7 @@ public class Program {
                         int removeId = scanner.nextInt();
                         System.out.print("Digite a quantidade a ser removida: ");
                         int removeQuantity = scanner.nextInt();
-
-                        // Percorre todas as categorias e produtos para encontrar o produto pelo ID
+                        
                         boolean found = false;
                         for (Set<Product> products : categoryMap.values()) {
                             for (Product product : products) {
@@ -86,7 +82,7 @@ public class Program {
                                     break;
                                 }
                             }
-                            if (found) break; // Se o produto foi encontrado, sai do loop
+                            if (found) break;
                         }
                         if (!found) {
                             System.out.println("Produto não encontrado!");
@@ -111,7 +107,7 @@ public class Program {
                 }
             } catch (InputMismatchException e) {
                 System.out.println("\nEntrada inválida!\n");
-                scanner.nextLine(); // Limpar o buffer
+                scanner.nextLine();
             } catch (IllegalArgumentException e) {
                 System.out.println("Erro na digitação!");
             }
