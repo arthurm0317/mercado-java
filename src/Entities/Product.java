@@ -1,8 +1,9 @@
 package Entities;
 
 import java.util.Objects;
+import java.util.Set;
 
-public class Product implements Comparable<Product>{
+public class Product {
     private Integer id;
     private String name;
     private Double price;
@@ -50,9 +51,8 @@ public class Product implements Comparable<Product>{
         this.quantity=getQuantity()-quantity;
     }
 
-    @Override
-    public int compareTo(Product other) {
-        return id.compareTo(other.getId());
+    public boolean getProductById(Product product, int id){
+        return product.getId()==id;
     }
 
     @Override
@@ -71,8 +71,8 @@ public class Product implements Comparable<Product>{
     @Override
     public String toString() {
         return  "ID: " + id +
-                ", nome: '" + name +
-                ", preço: R$" + price +
+                ", nome: " + name +
+                ", preço: R$" + String.format("%.2f", price)+
                 ", quantidade: " + quantity;
     }
 }

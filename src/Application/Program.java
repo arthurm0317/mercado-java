@@ -6,12 +6,14 @@ import Entities.enums.Categories;
 import java.util.*;
 
 public class Program {
+
     private static final Map<Categories, Set<Product>> categoryMap = new HashMap<>();
+    private static final Set<Integer> productsId = new HashSet<>();
 
     public static void main(String[] args) {
         Locale.setDefault(Locale.US);
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Bem vindo ao sistema do mercado imaginário!");
+        System.out.println("Bem vindo ao sistema do mercado jajava!");
         boolean continuar = true;
 
         while (continuar) {
@@ -30,9 +32,14 @@ public class Program {
                         System.out.print("Digite o ID do produto: ");
                         int id = scanner.nextInt();
                         scanner.nextLine();
+                        if (productsId.contains(id)) {
+                            System.out.println("ID já cadastrado! Escolha outro ID");
+                            break;
+                        }
+
                         System.out.print("Digite a categoria do produto (FOOD, FRUITS, VEGETABLES, CLEANING, HYGIENE, DRINKS): ");
-                        String categoryInput = scanner.nextLine().toUpperCase();
-                        Categories categoryEnum = Categories.valueOf(categoryInput);
+                        Categories category = Categories.valueOf(scanner.nextLine().toUpperCase());
+
                         System.out.print("Digite o nome do produto: ");
                         String name = scanner.nextLine();
                         System.out.print("Digite o preço do produto: ");
@@ -40,10 +47,10 @@ public class Program {
                         System.out.print("Digite a quantidade do produto: ");
                         int quantity = scanner.nextInt();
 
-                        Product newProduct = new Product(id, name, price, quantity);
+                        categoryMap.putIfAbsent(category, new TreeSet<>(Comparator.comparing(Product::getId)));
+                        categoryMap.get(category).add(new Product(id, name, price, quantity));
+                        productsId.add(id);
 
-                        categoryMap.putIfAbsent(categoryEnum, new TreeSet<>());
-                        categoryMap.get(categoryEnum).add(newProduct);
                     }
                     case 2 -> {
                         System.out.print("Digite o ID do produto que deseja acrescentar: ");
@@ -51,65 +58,55 @@ public class Program {
                         System.out.print("Digite a quantidade a ser acrescentada: ");
                         int addQuantity = scanner.nextInt();
 
-
-                        boolean found = false;
                         for (Set<Product> products : categoryMap.values()) {
-                            for (Product product : products) {
-                                if (product.getId() == addId) {
-                                    product.addProduct(addQuantity);
-                                    found = true;
-                                    break;
+                                for(Product product : products){
+                                    if (product.getProductById(product, addId)){
+                                        product.addProduct(addQuantity);
+                                    }else System.out.println("Produto não encontrado!");
                                 }
+
                             }
-                            if (found) break;
-                        }
-                        if (!found) {
-                            System.out.println("Produto não encontrado!");
-                        }
                     }
+
                     case 3 -> {
                         System.out.print("Digite o ID do produto que deseja remover: ");
                         int removeId = scanner.nextInt();
                         System.out.print("Digite a quantidade a ser removida: ");
                         int removeQuantity = scanner.nextInt();
 
-                        boolean found = false;
                         for (Set<Product> products : categoryMap.values()) {
-                            for (Product product : products) {
-                                if (product.getId() == removeId) {
-                                    product.removeProduct(removeQuantity);
-                                    found = true;
-                                    break;
+                                for(Product product : products){
+                                    if (product.getProductById(product, removeId)){
+                                        product.removeProduct(removeQuantity);
+                                    }else System.out.println("Produto não encontrado!");
                                 }
-                            }
-                            if (found) break;
+
                         }
-                        if (!found) {
-                            System.out.println("Produto não encontrado!");
-                        }
+
                     }
+
                     case 4 -> {
                         if (categoryMap.isEmpty()) {
                             System.out.println("Nenhum produto encontrado!");
                         } else {
                             for (Map.Entry<Categories, Set<Product>> entry : categoryMap.entrySet()) {
-                                Categories category = entry.getKey();
                                 Set<Product> products = entry.getValue();
-                                System.out.println("Categoria: " + category);
-                                for (Product product : products) {
-                                    System.out.println(product);
-                                }
+                                System.out.println("Categoria: " + entry.getKey());
+                                products.forEach(System.out::println);
                             }
                         }
                     }
+
                     case 5 -> continuar = false;
+
                     default -> System.out.println("Opção inválida!");
                 }
+
             } catch (InputMismatchException e) {
                 System.out.println("\nEntrada inválida!\n");
                 scanner.nextLine();
             } catch (IllegalArgumentException e) {
-                System.out.println("Erro na digitação!");
+                System.out.println("Erro na digitação!\n");
             }
         }
     }
