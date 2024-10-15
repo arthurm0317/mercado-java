@@ -1,7 +1,14 @@
-package Application;
+package application;
 
-import Entities.Product;
-import Entities.enums.Categories;
+import dao.CategoryDao;
+import dao.DaoFactory;
+import dao.ProductDao;
+import dao.impl.CategoryDaoJDBC;
+import dao.impl.ProdDaoJDBC;
+import db.DB;
+import entities.Category;
+import entities.Product;
+import entities.enums.Categories;
 
 import java.util.*;
 
@@ -15,6 +22,8 @@ public class Program {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Bem vindo ao sistema do mercado jajava!");
         boolean continuar = true;
+        CategoryDao categoryDao = DaoFactory.createCatDao();
+        ProductDao productDao = DaoFactory.createProdDao();
 
         while (continuar) {
             System.out.println("O que deseja fazer?");
@@ -22,9 +31,10 @@ public class Program {
                 System.out.println("""
                         1- Cadastrar um produto novo\s
                         2- Acrescentar produtos no estoque\s
-                        3- Remover produto do estoque\s
-                        4- Listar produtos em estoque\s
-                        5- Sair""");
+                        3- Reduzir estoque de produto\s
+                        4- Excluir produto do estoque\s
+                        5- Listar produtos em estoque\s
+                        6- Sair""");
                 int n = scanner.nextInt();
 
                 switch (n) {
@@ -32,25 +42,43 @@ public class Program {
                         System.out.print("Digite o ID do produto: ");
                         int id = scanner.nextInt();
                         scanner.nextLine();
+
                         if (productsId.contains(id)) {
                             System.out.println("ID já cadastrado! Escolha outro ID");
                             break;
                         }
 
-                        System.out.print("Digite a categoria do produto (FOOD, FRUITS, VEGETABLES, CLEANING, HYGIENE, DRINKS): ");
-                        Categories category = Categories.valueOf(scanner.nextLine().toUpperCase());
+                        Categories categoryEnum;
+                        try {
+                            System.out.print("Digite a categoria do produto (FOOD, FRUITS, VEGETABLES, CLEANING, HYGIENE, DRINKS): ");
+                            categoryEnum = Categories.valueOf(scanner.nextLine().toUpperCase());
+                        } catch (IllegalArgumentException e) {
+                            System.out.println("Categoria inválida! Escolha uma categoria válida.");
+                            break;
+                        }
 
                         System.out.print("Digite o nome do produto: ");
                         String name = scanner.nextLine();
+
                         System.out.print("Digite o preço do produto: ");
                         double price = scanner.nextDouble();
+
                         System.out.print("Digite a quantidade do produto: ");
                         int quantity = scanner.nextInt();
+                        scanner.nextLine();
 
-                        categoryMap.putIfAbsent(category, new TreeSet<>(Comparator.comparing(Product::getId)));
-                        categoryMap.get(category).add(new Product(id, name, price, quantity));
+                        Product product = new Product(id, name, price, quantity);
+
+                        Category category = new Category(categoryEnum);
+                        categoryDao.insertCategoryIfNotExists(categoryEnum);
+
+                        productDao.insert(product, category.getCategories());
+
+                        categoryMap.putIfAbsent(categoryEnum, new TreeSet<>(Comparator.comparing(Product::getId)));
+                        categoryMap.get(categoryEnum).add(product);
                         productsId.add(id);
 
+                        System.out.println("Produto cadastrado com sucesso!");
                     }
                     case 2 -> {
                         System.out.print("Digite o ID do produto que deseja acrescentar: ");
@@ -69,7 +97,7 @@ public class Program {
                     }
 
                     case 3 -> {
-                        System.out.print("Digite o ID do produto que deseja remover: ");
+                        System.out.print("Digite o ID do produto que deseja reduzir: ");
                         int removeId = scanner.nextInt();
                         System.out.print("Digite a quantidade a ser removida: ");
                         int removeQuantity = scanner.nextInt();
@@ -84,8 +112,19 @@ public class Program {
                         }
 
                     }
+                    case 4->{
+                        System.out.print("Digite o ID do produto que deseja excluir: ");
+                        int id = scanner.nextInt();
+                       for (Set<Product> products: categoryMap.values()){
+                           if (products.removeIf(product -> product.getId()==id)){
+                               System.out.println("Produto removido! ");
+                               break;
+                           }else System.out.println("Produto não encontrado!");
+                       }
 
-                    case 4 -> {
+                    }
+
+                    case 5 -> {
                         if (categoryMap.isEmpty()) {
                             System.out.println("Nenhum produto encontrado!");
                         } else {
@@ -97,7 +136,7 @@ public class Program {
                         }
                     }
 
-                    case 5 -> continuar = false;
+                    case 6 -> continuar = false;
 
                     default -> System.out.println("Opção inválida!");
                 }

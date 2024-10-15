@@ -1,4 +1,4 @@
-package Entities.enums;
+package entities.enums;
 
 public enum Categories {
     FOOD,

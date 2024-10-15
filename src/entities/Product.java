@@ -1,7 +1,6 @@
-package Entities;
+package entities;
 
 import java.util.Objects;
-import java.util.Set;
 
 public class Product {
     private Integer id;
@@ -9,11 +8,16 @@ public class Product {
     private Double price;
     private Integer quantity;
 
+    public Product(){
+
+    }
+
     public Product(Integer id, String name, Double price, Integer quantity) {
         this.id = id;
         this.name = name;
         this.price = price;
         this.quantity = quantity;
+
     }
 
     public Integer getId() {
@@ -54,6 +58,11 @@ public class Product {
     public boolean getProductById(Product product, int id){
         return product.getId()==id;
     }
+
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
+    }
+
 
     @Override
     public boolean equals(Object o) {
