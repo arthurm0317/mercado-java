@@ -40,6 +40,31 @@ public class CategoryDaoJDBC implements CategoryDao {
             DB.closeStatement(statement);
         }
     }
+    @Override
+    public Categories findCategoryByProductId(int productId) {
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+        try {
+            statement = connection.prepareStatement(
+                    "SELECT categories.name FROM produtos " +
+                            "INNER JOIN categories ON produtos.category_name = categories.name " +
+                            "WHERE produtos.id = ?"
+            );
+            statement.setInt(1, productId);
+            resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                return Categories.valueOf(resultSet.getString("name").toUpperCase());
+            }
+            return null; // ou lançar uma exceção se a categoria não for encontrada
+        } catch (SQLException e) {
+            throw new DbException(e.getMessage());
+        } finally {
+            DB.closeStatement(statement);
+            DB.closeResultSet(resultSet);
+        }
+    }
+
 
 
     @Override

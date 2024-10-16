@@ -7,6 +7,8 @@ import java.util.List;
 
 public interface CategoryDao {
     void insertCategoryIfNotExists(Categories categoryName);
+    Categories findCategoryByProductId(int productId);
     Category findById(Integer id);
     List<Category> findAll();
+
 }

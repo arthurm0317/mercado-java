@@ -3,9 +3,6 @@ package application;
 import dao.CategoryDao;
 import dao.DaoFactory;
 import dao.ProductDao;
-import dao.impl.CategoryDaoJDBC;
-import dao.impl.ProdDaoJDBC;
-import db.DB;
 import entities.Category;
 import entities.Product;
 import entities.enums.Categories;
@@ -15,7 +12,6 @@ import java.util.*;
 public class Program {
 
     private static final Map<Categories, Set<Product>> categoryMap = new HashMap<>();
-    private static final Set<Integer> productsId = new HashSet<>();
 
     public static void main(String[] args) {
         Locale.setDefault(Locale.US);
@@ -42,11 +38,6 @@ public class Program {
                         System.out.print("Digite o ID do produto: ");
                         int id = scanner.nextInt();
                         scanner.nextLine();
-
-                        if (productsId.contains(id)) {
-                            System.out.println("ID já cadastrado! Escolha outro ID");
-                            break;
-                        }
 
                         Categories categoryEnum;
                         try {
@@ -76,12 +67,11 @@ public class Program {
 
                         categoryMap.putIfAbsent(categoryEnum, new TreeSet<>(Comparator.comparing(Product::getId)));
                         categoryMap.get(categoryEnum).add(product);
-                        productsId.add(id);
-
                         System.out.println("Produto cadastrado com sucesso!");
                     }
+
                     case 2 -> {
-                        System.out.print("Digite o ID do produto que deseja acrescentar: ");
+                        System.out.print("Digite o ID do produto que deseja alterar: ");
                         int addId = scanner.nextInt();
                         System.out.print("Digite a quantidade a ser acrescentada: ");
                         int addQuantity = scanner.nextInt();
@@ -115,25 +105,12 @@ public class Program {
                     case 4->{
                         System.out.print("Digite o ID do produto que deseja excluir: ");
                         int id = scanner.nextInt();
-                       for (Set<Product> products: categoryMap.values()){
-                           if (products.removeIf(product -> product.getId()==id)){
-                               System.out.println("Produto removido! ");
-                               break;
-                           }else System.out.println("Produto não encontrado!");
-                       }
+                       productDao.deleteById(id);
 
                     }
 
-                    case 5 -> {
-                        if (categoryMap.isEmpty()) {
-                            System.out.println("Nenhum produto encontrado!");
-                        } else {
-                            for (Map.Entry<Categories, Set<Product>> entry : categoryMap.entrySet()) {
-                                Set<Product> products = entry.getValue();
-                                System.out.println("Categoria: " + entry.getKey());
-                                products.forEach(System.out::println);
-                            }
-                        }
+                    case 5 ->{
+                        productDao.printProductsByCategory();
                     }
 
                     case 6 -> continuar = false;
