@@ -26,11 +26,12 @@ public class Program {
             try {
                 System.out.println("""
                         1- Cadastrar um produto novo\s
-                        2- Acrescentar produtos no estoque\s
-                        3- Reduzir estoque de produto\s
-                        4- Excluir produto do estoque\s
-                        5- Listar produtos em estoque\s
-                        6- Sair""");
+                        2- Alterar quantidade do estoque\s
+                        3- Alterar o preço do produto\s
+                        4- Alterar nome\s
+                        5- Excluir produto do estoque\s
+                        6- Listar produtos em estoque\s
+                        7- Sair""");
                 int n = scanner.nextInt();
 
                 switch (n) {
@@ -64,56 +65,49 @@ public class Program {
                         categoryDao.insertCategoryIfNotExists(categoryEnum);
 
                         productDao.insert(product, category.getCategories());
-
-                        categoryMap.putIfAbsent(categoryEnum, new TreeSet<>(Comparator.comparing(Product::getId)));
-                        categoryMap.get(categoryEnum).add(product);
                         System.out.println("Produto cadastrado com sucesso!");
                     }
 
                     case 2 -> {
                         System.out.print("Digite o ID do produto que deseja alterar: ");
-                        int addId = scanner.nextInt();
-                        System.out.print("Digite a quantidade a ser acrescentada: ");
-                        int addQuantity = scanner.nextInt();
-
-                        for (Set<Product> products : categoryMap.values()) {
-                                for(Product product : products){
-                                    if (product.getProductById(product, addId)){
-                                        product.addProduct(addQuantity);
-                                    }else System.out.println("Produto não encontrado!");
-                                }
-
-                            }
+                        int id = scanner.nextInt();
+                        System.out.print("Digite a nova quantidade: ");
+                        int quantity = scanner.nextInt();
+                        productDao.updateQuantity(id, quantity);
                     }
-
-                    case 3 -> {
-                        System.out.print("Digite o ID do produto que deseja reduzir: ");
-                        int removeId = scanner.nextInt();
-                        System.out.print("Digite a quantidade a ser removida: ");
-                        int removeQuantity = scanner.nextInt();
-
-                        for (Set<Product> products : categoryMap.values()) {
-                                for(Product product : products){
-                                    if (product.getProductById(product, removeId)){
-                                        product.removeProduct(removeQuantity);
-                                    }else System.out.println("Produto não encontrado!");
-                                }
-
-                        }
-
+                    case 3->{
+                        System.out.print("Digite o ID do produto: ");
+                        int id = scanner.nextInt();
+                        scanner.nextLine();
+                        System.out.print("Digite o novo preço do produto: ");
+                        Double price = scanner.nextDouble();
+                        productDao.updatePrice(id, price);
                     }
                     case 4->{
+                        System.out.print("Digite o ID do produto: ");
+                        int id = scanner.nextInt();
+                        scanner.nextLine();
+                        System.out.print("Digite o nome do produto: ");
+                        String name = scanner.nextLine();
+                        productDao.updateName(id, name);
+                    }
+                    case 5->{
                         System.out.print("Digite o ID do produto que deseja excluir: ");
                         int id = scanner.nextInt();
-                       productDao.deleteById(id);
-
+                        System.out.print("Deseja mesmo excluir o produto: " +productDao.findById(id)+"\n(y/n)\n");
+                        String x = scanner.next();
+                        if (x.equals("y")){
+                            productDao.deleteById(id);
+                        }else {
+                            System.out.println("Operação cancelada");
+                        }
                     }
 
-                    case 5 ->{
+                    case 6 ->{
                         productDao.printProductsByCategory();
                     }
 
-                    case 6 -> continuar = false;
+                    case 7 -> continuar = false;
 
                     default -> System.out.println("Opção inválida!");
                 }

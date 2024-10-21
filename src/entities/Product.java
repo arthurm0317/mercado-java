@@ -48,17 +48,6 @@ public class Product {
         return quantity;
     }
 
-    public void addProduct(int quantity){
-        this.quantity=getQuantity()+quantity;
-    }
-    public void removeProduct(int quantity){
-        this.quantity=getQuantity()-quantity;
-    }
-
-    public boolean getProductById(Product product, int id){
-        return product.getId()==id;
-    }
-
     public void setQuantity(Integer quantity) {
         this.quantity = quantity;
     }

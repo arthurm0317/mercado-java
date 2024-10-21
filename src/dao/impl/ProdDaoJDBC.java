@@ -22,10 +22,9 @@ public class ProdDaoJDBC implements ProductDao {
 
     private final Connection connection;
 
-    public ProdDaoJDBC(Connection connection){
+    public ProdDaoJDBC(Connection connection) {
         this.connection = connection;
     }
-
 
 
     private Category instantiateCategory(ResultSet resultSet) throws SQLException {
@@ -69,8 +68,42 @@ public class ProdDaoJDBC implements ProductDao {
     }
 
     @Override
-    public void update(Product prod) {
+    public void updateName(Integer id, String name) {
+        PreparedStatement statement = null;
+        try {
+            statement = connection.prepareStatement("UPDATE produtos SET name = ? where id = ?");
+            statement.setString(1, name);
+            statement.setInt(2, id);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new DbException(e.getMessage());
+        }
+    }
 
+    @Override
+    public void updateQuantity(Integer id, Integer quantity) {
+        PreparedStatement statement = null;
+        try {
+            statement = connection.prepareStatement("UPDATE produtos SET quantity = ? where id = ?");
+            statement.setInt(1, quantity);
+            statement.setInt(2, id);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new DbException(e.getMessage());
+        }
+    }
+
+    @Override
+    public void updatePrice(Integer id, Double price) {
+        PreparedStatement statement = null;
+        try {
+            statement = connection.prepareStatement("UPDATE produtos SET price = ? where id = ?");
+            statement.setDouble(1, price);
+            statement.setInt(2, id);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new DbException(e.getMessage());
+        }
     }
 
     @Override
@@ -80,20 +113,19 @@ public class ProdDaoJDBC implements ProductDao {
             statement = connection.prepareStatement("DELETE FROM produtos WHERE id = ?");
             statement.setInt(1, id);
             statement.executeUpdate();
-        }catch (SQLException e){
+        } catch (SQLException e) {
             throw new DbException(e.getMessage());
-        }finally {
+        } finally {
             DB.closeStatement(statement);
         }
 
     }
-
     @Override
     public Product findById(Integer id) {
         PreparedStatement statement = null;
         ResultSet resultSet = null;
         try {
-            statement = connection.prepareStatement("SELECT FROM produtos WHERE id=?");
+            statement = connection.prepareStatement("SELECT * FROM produtos WHERE id=?");
             statement.setInt(1, id);
             resultSet = statement.executeQuery();
             if(resultSet.next()){
@@ -167,10 +199,4 @@ public class ProdDaoJDBC implements ProductDao {
         }
     }
 
-
-
-    @Override
-    public List<Product> findByCategory(Category category) {
-        return List.of();
-    }
 }

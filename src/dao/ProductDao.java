@@ -9,10 +9,11 @@ import java.util.List;
 public interface ProductDao {
     void insert(Product product, Categories category);
 
-    void update(Product prod);
+    void updateName(Integer id, String name);
+    void updatePrice(Integer id, Double price);
     void deleteById(Integer id);
     Product findById(Integer id);
     List<Product> findAll();
-    List<Product> findByCategory(Category category);
     void printProductsByCategory();
+    void updateQuantity(Integer id, Integer quantity);
 }

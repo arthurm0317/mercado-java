@@ -3,11 +3,8 @@ package dao.impl;
 import dao.CategoryDao;
 import db.DB;
 import db.DbException;
-import entities.Category;
 import entities.enums.Categories;
-
 import java.sql.*;
-import java.util.List;
 
 public class CategoryDaoJDBC implements CategoryDao {
 
@@ -56,7 +53,7 @@ public class CategoryDaoJDBC implements CategoryDao {
             if (resultSet.next()) {
                 return Categories.valueOf(resultSet.getString("name").toUpperCase());
             }
-            return null; // ou lançar uma exceção se a categoria não for encontrada
+            return null;
         } catch (SQLException e) {
             throw new DbException(e.getMessage());
         } finally {
@@ -65,15 +62,4 @@ public class CategoryDaoJDBC implements CategoryDao {
         }
     }
 
-
-
-    @Override
-    public Category findById(Integer id) {
-        return null;
-    }
-
-    @Override
-    public List<Category> findAll() {
-        return List.of();
-    }
 }
